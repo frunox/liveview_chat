@@ -23,6 +23,7 @@ defmodule LiveviewChat.Message do
 
   # add notify to execute on new message creation
   def create_message(attrs) do
+    # This runs the changeset function, which casts the name and message for insertion.
     %Message{}
     |> changeset(attrs)
     |> Repo.insert()

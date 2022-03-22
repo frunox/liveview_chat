@@ -16,13 +16,17 @@ defmodule LiveviewChatWeb.MessageLive do
   end
 
   def handle_event("new_message", %{"message" => params}, socket) do
+    # IO.inspect(params, label: "&&&&&&&&&&  params in handle_event")
+
     case Message.create_message(params) do
       {:error, changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
 
+      # the changeset below is provided to the form to show the users hame
       # broadcast returns :ok if there are no errors
       :ok ->
         changeset = Message.changeset(%Message{}, %{"name" => params["name"]})
+        # IO.inspect(changeset, label: "&&&&&&&&&&  changeset in handle_event")
         {:noreply, assign(socket, changeset: changeset)}
     end
   end
