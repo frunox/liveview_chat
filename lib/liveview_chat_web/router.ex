@@ -14,10 +14,19 @@ defmodule LiveviewChatWeb.Router do
     plug :accepts, ["json"]
   end
 
+  # auth pipeline
+  pipeline :authOptional, do: plug(AuthPlugOptional)
+
+  scope "/", LiveviewChatWeb do
+    pipe_through [:browser, :authOptional]
+
+    live "/", MessageLive
+  end
+
   scope "/", LiveviewChatWeb do
     pipe_through :browser
 
-    live "/", MessageLive
+    get "/login", AuthController, :login
   end
 
   # Other scopes may use custom stacks.
