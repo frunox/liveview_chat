@@ -5,12 +5,21 @@ defmodule LiveviewChatWeb.MessageLive do
   use LiveviewChatWeb, :live_view
   alias LiveviewChat.Message
 
+  # run auth on mount
+  on_mount LiveviewChatWeb.AuthController
+
   # add 'if_connected' to check socket connection and subscibe
   def mount(_params, _session, socket) do
     if connected?(socket), do: Message.subscribe()
 
+    changeset =
+      if socket.assigns.loggedin do
+        Message.changeset(%Message{}, %{"name" => socket.assigns.person["givenName"]})
+      else
+        Message.changeset(%Message{}, %{})
+      end
+
     messages = Message.list_messages() |> Enum.reverse()
-    changeset = Message.changeset(%Message{}, %{})
 
     {:ok, assign(socket, messages: messages, changeset: changeset),
      temporary_assigns: [messages: []]}
